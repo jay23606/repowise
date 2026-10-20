@@ -61,3 +61,13 @@ class TestDoctorFormatJson:
         assert result.exit_code != 0
         assert "--repair" in result.output
         assert "json" in result.output.lower()
+
+
+class TestDoctorTableExitCode:
+    def test_table_mode_exits_nonzero_when_checks_fail(self, tmp_path: Path) -> None:
+        _git_init(tmp_path)
+
+        result = CliRunner().invoke(doctor_command, [str(tmp_path), "--no-workspace"])
+
+        assert "Some checks failed." in result.output, result.output
+        assert result.exit_code == 1, result.output
